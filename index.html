@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+	<link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  </head>
+  <body>
+	<div class="CSSTableGenerator" >
+		<table>
+			<tr>
+				<th>Test Time</th>
+				<th>Response Time</th>
+				<th>Result</th>
+			</tr>
+			
+			{% for log in logs %}
+			  <tr>
+				<td>{{ log.date.strftime("%Y-%m-%d %H:%M") }}</td>
+				<td>{{ log.responseTime }}</td>
+				<td>{{ log.content|safe }}</td></tr>			  
+			  </tr>
+			{% endfor %}
+		</table>
+	</div>
+	
+	<hr>
+	
+    <form action="/run" method="get">
+      <div><input type="submit" value="Manually Run Test"></div>
+    </form>
+
+  </body>
+</html>
+{% endautoescape %}

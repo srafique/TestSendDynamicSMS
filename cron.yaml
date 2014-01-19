@@ -1,0 +1,5 @@
+cron:
+- description: hourly api test
+  url: /run
+  schedule: every 1 hours
+  target: version-2
