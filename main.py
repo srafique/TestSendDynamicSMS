@@ -19,20 +19,29 @@ import jinja2
 import webapp2
 import requests
 
+#importing no sqldb
 from google.appengine.ext import ndb
 
+#setting up Jinja environment to be use for templates
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+	
 smsapilog_key = ndb.Key('SMSAPILog', 'default_smsapilog')
 
+#Log class corresponds to each row in database
+#Has following properties
+#content: Result of the api call
+#responseTime: Is the actual response time for api call
+#date: Used to store the date time stamp, when api call was made(Is used to sort results to display in descending order)
 class Log(ndb.Model):
   content = ndb.TextProperty()
   responseTime = ndb.TextProperty()
   date = ndb.DateTimeProperty(auto_now_add=True)
   
+#Main Handler class, setup query to get top 10 results. Setup values to be passed to Jinja template and call template so that it can be rendered.
 class MainHandler(webapp2.RequestHandler):
   def get(self):
     logs = ndb.gql('SELECT * '
@@ -47,6 +56,7 @@ class MainHandler(webapp2.RequestHandler):
     template = JINJA_ENVIRONMENT.get_template('index.html')
     self.response.write(template.render(template_values))
 
+#SMSAPILog class calls the api; this class will be initiated when manual test will be run and also from scheduling task. it write the results using Log class.
 class SMSAPILog(webapp2.RequestHandler):
   def get(self):
     log = Log(parent=smsapilog_key)
